@@ -12,6 +12,7 @@ public class CommonConstants {
          * 系统错误，返回信息，对应状态码为-1
          */
         public static final String SYSTEM_EXCEPTION = "系统繁忙，请稍后再试";
+        public static final String TEST = "测试";
 
         /**
          * 业务逻辑错误
