@@ -1,0 +1,21 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: ad-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
+
+zuul:
+  prefix: /cheer
+  routes:
+    sponsor:
+      path: /ad-sponsor/**      # 多级目录，任意字符
+      serviceId: eureka-client-ad-sponsor # 路由到微服务的名称
+      strip-prefix: false
+#    search:
+#      path: /ad-search/**
+#      serviceId: eureka-client-ad-search
+#      strip-prefix: false
