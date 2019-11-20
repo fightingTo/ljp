@@ -1,0 +1,15 @@
+package com.cheer.ad.dump;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdUnitDistrictTable {
+
+    private Long unitId;
+    private String province;
+    private String city;
+}

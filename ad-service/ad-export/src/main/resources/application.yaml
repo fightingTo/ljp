@@ -1,0 +1,28 @@
+server:
+  port: 7002
+#  servlet:
+#    context-path: /ad-sponsor
+
+spring:
+  application:
+    name: eureka-client-ad-export
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none # 手动创建表，不需要自动根据实体类创建表 create-drop / none / update / validate
+    properties:
+      hibernate.format_sql: true
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/imooc_ad_data?autoReconnect=true # &useSSL=true&serverTimezone=UTC
+    username: root
+    password: 123456
+    tomcat:
+      max-active: 4
+      min-idle: 2
+      initial-size: 2
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka/
