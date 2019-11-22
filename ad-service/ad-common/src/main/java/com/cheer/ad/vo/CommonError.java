@@ -18,7 +18,8 @@ public enum CommonError {
     SAME_NAME_UNIT_ERROR( "10005","存在同名的推广单元"),
     REQUEST_DATA_NUMBER_ERROR ( "10006","请求参数中的id获取对应数据库中的数据个数不符"),
     GET_DATA_EMPTY("10007", "获取数据为空"),
-    WRITE_DATA_ERROR("10008", "写入数据出错"),
+    WRITE_FILE_DATA_ERROR("10008", "写入索引文件数据出错"),
+    READ_FILE_DATA_ERROR("10009", "加载索引文件数据出错"),
     PARSER_DATE_ERROR("20001", "解析字符串为时间错误");
 
     @Getter

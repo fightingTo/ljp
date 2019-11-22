@@ -1,7 +1,7 @@
 package com.cheer.ad.index.keyword;
 
 import com.cheer.ad.index.IndexAware;
-import com.cheer.ad.utils.CommonUtils;
+import com.cheer.ad.utils.IndexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,7 +57,7 @@ public class UnitKeywordIndex implements IndexAware<String, Set<Long>> {
         log.info("UnitKeywordIndex, before add: {}", unitKeywordMap);
 
         // 对不存关键字的keywordUnitMap中的key，对应构建一个set集合
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 keyword,
                 keywordUnitMap,
                 ConcurrentSkipListSet::new
@@ -72,7 +72,7 @@ public class UnitKeywordIndex implements IndexAware<String, Set<Long>> {
              * 某个推广单元还不存在需要添加的关键词
              *      -> 构建并添加此推广单元对应不存在关键词的集合
              */
-            Set<String> keywordSet = CommonUtils.getOrCreate(unitId, unitKeywordMap, ConcurrentSkipListSet::new
+            Set<String> keywordSet = IndexUtils.getAndCreateIfNeed(unitId, unitKeywordMap, ConcurrentSkipListSet::new
             );
             keywordSet.add(keyword);
         }
@@ -90,7 +90,7 @@ public class UnitKeywordIndex implements IndexAware<String, Set<Long>> {
         log.info("UnitKeywordIndex, before delete: {}", unitKeywordMap);
 
         // 可能删除的是部分关键词 -> unitIds的映射，先获取
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 keyword,
                 keywordUnitMap,
                 ConcurrentSkipListSet::new
@@ -98,7 +98,7 @@ public class UnitKeywordIndex implements IndexAware<String, Set<Long>> {
         unitIdSet.removeAll(unitIds);
 
         for (Long unitId : unitIds) {
-            Set<String> keywordSet = CommonUtils.getOrCreate(
+            Set<String> keywordSet = IndexUtils.getAndCreateIfNeed(
                     unitId, unitKeywordMap,
                     ConcurrentSkipListSet::new
             );

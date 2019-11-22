@@ -2,6 +2,7 @@ package com.cheer.ad.index.unit;
 
 import com.cheer.ad.index.plan.AdPlanObject;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class AdUnitObject {
 
     private Long unitId;

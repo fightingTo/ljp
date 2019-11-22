@@ -1,7 +1,7 @@
 package com.cheer.ad.index.interest;
 
 import com.cheer.ad.index.IndexAware;
-import com.cheer.ad.utils.CommonUtils;
+import com.cheer.ad.utils.IndexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class UnitItIndex implements IndexAware<String, Set<Long>> {
     @Override
     public void add(String tag, Set<Long> unitIds) {
         log.info("UnitItIndex, before add: {}", unitItMap);
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 tag,
                 itUnitMap,
                 ConcurrentSkipListSet::new
@@ -54,7 +54,7 @@ public class UnitItIndex implements IndexAware<String, Set<Long>> {
         unitIdSet.addAll(unitIds);
 
         for (Long unitId : unitIds) {
-            Set<String> tagSet = CommonUtils.getOrCreate(
+            Set<String> tagSet = IndexUtils.getAndCreateIfNeed(
                     unitId,
                     unitItMap,
                     ConcurrentSkipListSet::new
@@ -76,7 +76,7 @@ public class UnitItIndex implements IndexAware<String, Set<Long>> {
      */
     @Override
     public void delete(String tag, Set<Long> unitIds) {
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 tag,
                 itUnitMap,
                 ConcurrentSkipListSet::new
@@ -84,7 +84,7 @@ public class UnitItIndex implements IndexAware<String, Set<Long>> {
         unitIdSet.removeAll(unitIds);
 
         for (Long unitId : unitIds) {
-            Set<String> tagSet = CommonUtils.getOrCreate(
+            Set<String> tagSet = IndexUtils.getAndCreateIfNeed(
                     unitId,
                     unitItMap,
                     ConcurrentSkipListSet::new

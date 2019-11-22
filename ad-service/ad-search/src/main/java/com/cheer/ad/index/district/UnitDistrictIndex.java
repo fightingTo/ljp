@@ -1,7 +1,7 @@
 package com.cheer.ad.index.district;
 
 import com.cheer.ad.index.IndexAware;
-import com.cheer.ad.utils.CommonUtils;
+import com.cheer.ad.utils.IndexUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
         log.info("UnitDistrictIndex, before add: {}", unitDistrictMap);
 
         // 先对districtUnitMap倒排索引进行添加
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 provinceAndCity,
                 districtUnitMap,
                 CopyOnWriteArraySet::new
@@ -55,7 +55,7 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
 
         // 对unitDistrictMap正向索引进行添加
         for (Long unitId : unitIds) {
-            Set<String> provinceAndCitySet = CommonUtils.getOrCreate(
+            Set<String> provinceAndCitySet = IndexUtils.getAndCreateIfNeed(
                     unitId,
                     unitDistrictMap,
                     CopyOnWriteArraySet::new
@@ -76,7 +76,7 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
         log.info("UnitDistrictIndex, before delete: {}", unitDistrictMap);
 
         // 先对districtUnitMap倒排索引进行删除(支持部分删除)
-        Set<Long> unitIdSet = CommonUtils.getOrCreate(
+        Set<Long> unitIdSet = IndexUtils.getAndCreateIfNeed(
                 provinceAndCity,
                 districtUnitMap,
                 CopyOnWriteArraySet::new
@@ -85,7 +85,7 @@ public class UnitDistrictIndex implements IndexAware<String, Set<Long>> {
 
         // 对unitDistrictMap正向索引进行刪除
         for (Long unitId : unitIds) {
-            Set<String> provinceAndCitySet = CommonUtils.getOrCreate(
+            Set<String> provinceAndCitySet = IndexUtils.getAndCreateIfNeed(
                     unitId,
                     unitDistrictMap,
                     ConcurrentSkipListSet::new

@@ -9,8 +9,20 @@ import com.cheer.ad.dao.unit_condition.AdUnitDistrictRepository;
 import com.cheer.ad.dao.unit_condition.AdUnitItRepository;
 import com.cheer.ad.dao.unit_condition.AdUnitKeywordRepository;
 import com.cheer.ad.dao.unit_condition.CreativeUnitRepository;
+import com.cheer.ad.dump.AdCreativeTable;
+import com.cheer.ad.dump.AdCreativeUnitTable;
 import com.cheer.ad.dump.AdPlanTable;
+import com.cheer.ad.dump.AdUnitDistrictTable;
+import com.cheer.ad.dump.AdUnitItTable;
+import com.cheer.ad.dump.AdUnitKeywordTable;
+import com.cheer.ad.dump.AdUnitTable;
 import com.cheer.ad.entity.AdPlan;
+import com.cheer.ad.entity.AdUnit;
+import com.cheer.ad.entity.Creative;
+import com.cheer.ad.entity.unit_condition.AdUnitDistrict;
+import com.cheer.ad.entity.unit_condition.AdUnitIt;
+import com.cheer.ad.entity.unit_condition.AdUnitKeyword;
+import com.cheer.ad.entity.unit_condition.CreativeUnit;
 import com.cheer.ad.exception.AdException;
 import com.cheer.ad.vo.CommonConstants;
 import com.cheer.ad.vo.CommonError;
@@ -35,7 +47,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class DumpDataService {
-
     @Autowired
     private AdPlanRepository planRepository;
     @Autowired
@@ -88,25 +99,6 @@ public class DumpDataService {
         );
     }
 
-    private void dumpAdUnitKeywordTable(String filePath) {
-        //TODO 待完成(2019年11月20日)
-    }
-
-    private void dumpAdUnitItTable(String filePath) {
-    }
-
-    private void dumpAdUnitDistrictTable(String filePath) {
-    }
-
-    private void dumpAdCreativeUnitTable(String filePath) {
-    }
-
-    private void dumpAdCreativeTable(String filePath) {
-    }
-
-    private void dumpAdUnitTable(String filePath) {
-    }
-
     private void dumpAdPlanTable(String filePath) throws AdException {
         // 获取有效广告计划数据
         List<AdPlan> adPlanList = planRepository.findAllByPlanStatus(CommonStatus.VALID.getStatus());
@@ -133,10 +125,153 @@ public class DumpDataService {
                 writer.write(JSON.toJSONString(planTable));
                 writer.newLine();
             }
-           writer.close();
+            writer.close();
         }catch (IOException e) {
             log.error("dumpAdPlanTable error, fileName:{}", path.getFileName());
-            throw new AdException(CommonError.WRITE_DATA_ERROR);
+            throw new AdException(CommonError.WRITE_FILE_DATA_ERROR);
+        }
+    }
+
+    private void dumpAdUnitKeywordTable(String filePath) throws AdException {
+        // 获取有效数据
+        List<AdUnitKeyword> adUnitKeywords = keywordRepository.findAll();
+        if (CollectionUtils.isEmpty(adUnitKeywords)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射数据字段为AdUnitKeywordTable字段
+        List<AdUnitKeywordTable> keywordTableList = new ArrayList<>();
+        for (AdUnitKeyword unitKeyword : adUnitKeywords) {
+            keywordTableList.add(new AdUnitKeywordTable(
+                    unitKeyword.getUnitId(),
+                    unitKeyword.getKeyword()
+            ));
+        }
+
+        // 数据写入指定目录文件
+       writeData(filePath, keywordTableList);
+    }
+
+    private void dumpAdUnitItTable(String filePath) throws AdException {
+        // 获取数据
+        List<AdUnitIt> adUnitIts = itRepository.findAll();
+        if (CollectionUtils.isEmpty(adUnitIts)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射数据字段
+        List<AdUnitItTable> itTableList = new ArrayList<>();
+        for (AdUnitIt adUnitIt : adUnitIts) {
+            itTableList.add(new AdUnitItTable(
+                    adUnitIt.getUnitId(),
+                    adUnitIt.getItTag()
+            ));
+        }
+
+        // 写入数据
+        writeData(filePath, itTableList);
+    }
+
+    private void dumpAdUnitDistrictTable(String filePath) throws AdException {
+        // 获取数据
+        List<AdUnitDistrict> districts = districtRepository.findAll();
+        if (CollectionUtils.isEmpty(districts)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射字段数据
+        List<AdUnitDistrictTable> districtTableList = new ArrayList<>();
+        for (AdUnitDistrict district : districts) {
+            districtTableList.add(new AdUnitDistrictTable(
+                    district.getUnitId(),
+                    district.getProvince(),
+                    district.getCity()
+            ));
+        }
+
+        // 写入数据
+        writeData(filePath, districtTableList);
+    }
+
+    private void dumpAdCreativeUnitTable(String filePath) throws AdException {
+        // 获取数据
+        List<CreativeUnit> creativeUnits = creativeUnitRepository.findAll();
+        if (CollectionUtils.isEmpty(creativeUnits)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射字段数据
+        List<AdCreativeUnitTable> creativeUnitList = new ArrayList<>();
+        for (CreativeUnit creativeUnit : creativeUnits) {
+            creativeUnitList.add(new AdCreativeUnitTable(
+                    creativeUnit.getCreativeId(),
+                    creativeUnit.getUnitId()
+            ));
+        }
+
+        // 写入数据
+        writeData(filePath, creativeUnitList);
+    }
+
+    private void dumpAdCreativeTable(String filePath) throws AdException {
+        // 获取数据
+        List<Creative> creatives = creativeRepository.findAll();
+        if (CollectionUtils.isEmpty(creatives)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射字段数据
+        List<AdCreativeTable> creativeTableList = new ArrayList<>();
+        for (Creative creative : creatives) {
+            creativeTableList.add(new AdCreativeTable(
+                    creative.getId(),
+                    creative.getName(),
+                    creative.getType(),
+                    creative.getMaterialType(),
+                    creative.getHeight(),
+                    creative.getWidth(),
+                    creative.getAuditStatus(),
+                    creative.getUrl()
+            ));
+        }
+
+        // 写入数据
+        writeData(filePath, creativeTableList);
+    }
+
+    private void dumpAdUnitTable(String filePath) throws AdException {
+        // 获取数据
+        List<AdUnit> adUnits = unitRepository.findAllByUnitStatus(CommonStatus.VALID.getStatus());
+        if (CollectionUtils.isEmpty(adUnits)) {
+            throw new AdException(CommonError.GET_DATA_EMPTY);
+        }
+
+        // 映射字段数据
+        List<AdUnitTable> unitTableList = new ArrayList<>();
+        for (AdUnit unit : adUnits) {
+            unitTableList.add(new AdUnitTable(
+                    unit.getId(),
+                    unit.getUnitStatus(),
+                    unit.getPositionType(),
+                    unit.getPlanId()
+            ));
+        }
+
+        // 写入数据
+        writeData(filePath, unitTableList);
+    }
+
+    private <T> void writeData(String filePath, List<T> dataList) throws AdException {
+        Path path = Paths.get(filePath);
+        try(BufferedWriter writer = Files.newBufferedWriter(path)) {
+            for (T data : dataList) {
+                writer.write(JSON.toJSONString(data));
+                writer.newLine();
+            }
+            writer.close();
+        }catch (IOException e) {
+            log.error("write data error");
+            throw new AdException(CommonError.WRITE_FILE_DATA_ERROR);
         }
     }
 }
